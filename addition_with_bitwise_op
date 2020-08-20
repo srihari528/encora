@@ -1,0 +1,114 @@
+Method 1:
+
+#include<iostream>
+using namespace std;
+
+int add(int a,int b)
+{
+	int carry;
+	int x, y;
+
+	//For later use as we are going to modify values of a and b
+	x = a;
+	y = b;
+
+	while (b != 0)
+	{
+		carry = (a & b); //to maintain the carry
+		a = a ^ b; // to have a+b without carry
+		b = carry << 1; 
+		cout << "a= " << a << " b= " << b << " carry = " << carry << endl;
+	}
+
+	if (x > 0 && y > 0 && a < 0)
+		return -1;
+	if (x < 0 && y < 0 && a > 0)
+		return -1;
+
+	return a;
+}
+
+int main()
+{
+	int result = add(0x7FFFFFFE, 2);
+	cout << "Result: " << result << endl;
+	return 0;
+}
+
+
+
+Output:
+
+a= 2147483644 b= 4 carry = 2
+a= 2147483640 b= 8 carry = 4
+a= 2147483632 b= 16 carry = 8
+a= 2147483616 b= 32 carry = 16
+a= 2147483584 b= 64 carry = 32
+a= 2147483520 b= 128 carry = 64
+a= 2147483392 b= 256 carry = 128
+a= 2147483136 b= 512 carry = 256
+a= 2147482624 b= 1024 carry = 512
+a= 2147481600 b= 2048 carry = 1024
+a= 2147479552 b= 4096 carry = 2048
+a= 2147475456 b= 8192 carry = 4096
+a= 2147467264 b= 16384 carry = 8192
+a= 2147450880 b= 32768 carry = 16384
+a= 2147418112 b= 65536 carry = 32768
+a= 2147352576 b= 131072 carry = 65536
+a= 2147221504 b= 262144 carry = 131072
+a= 2146959360 b= 524288 carry = 262144
+a= 2146435072 b= 1048576 carry = 524288
+a= 2145386496 b= 2097152 carry = 1048576
+a= 2143289344 b= 4194304 carry = 2097152
+a= 2139095040 b= 8388608 carry = 4194304
+a= 2130706432 b= 16777216 carry = 8388608
+a= 2113929216 b= 33554432 carry = 16777216
+a= 2080374784 b= 67108864 carry = 33554432
+a= 2013265920 b= 134217728 carry = 67108864
+a= 1879048192 b= 268435456 carry = 134217728
+a= 1610612736 b= 536870912 carry = 268435456
+a= 1073741824 b= 1073741824 carry = 536870912
+a= 0 b= -2147483648 carry = 1073741824
+a= -2147483648 b= 0 carry = 0
+Result: -1
+
+
+
+Method 2: (By adding each bit one by one)
+
+
+#include<iostream>
+using namespace std;
+
+int add(int a, int b)
+{
+	int carry = 0, result = 0;
+	int n1, n2, s;
+	for (int i = 0; i < 32; i++)
+	{
+		n1 = (a & (1 << (i))) >> (i); //find the nth bit of p
+		n2 = (b & (1 << (i))) >> (i); //find the nth bit of q
+
+		s = n1 ^ n2 ^ carry; //sum of bits
+		carry = (carry == 0) ? (n1 & n2) : (n1 | n2); //calculate the carry for the next iteration
+		result = result | (s << (i)); //calculate resultant bit
+	}
+
+	if (a > 0 && b > 0 && result < 0)
+		return -1;
+	if (a < 0 && b < 0 && result > 0)
+		return -1;
+	return result;
+}
+
+int main()
+{
+	int result = add(0x7FFFFFFE, 2);
+	cout << "Result: " << result << endl;
+	return 0;
+}
+
+
+Output:
+
+Result: -1
