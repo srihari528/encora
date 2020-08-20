@@ -1,0 +1,61 @@
+#include <iostream>
+#include<vector>
+
+using namespace std;
+
+void find_largest_element(const unsigned int T, const vector<unsigned int> &I, vector<unsigned int> &M, unsigned int &S)
+{
+	unsigned int max = 0;
+	unsigned int n = I.size();
+	unsigned int i, j;
+
+	unsigned int max_possibilities = (unsigned int)pow(2, n);
+
+	//iterate for maximum number of possibilities
+	for (i = 0; i < max_possibilities; i++)
+	{
+		unsigned int sum = 0;
+		vector<int> temp;
+		
+		for (j = 0; j < n; j++)
+		{
+			if ((i & (1 << j)) != 0) {
+				sum += I[j];
+				temp.push_back(I[j]);
+			}
+
+		}
+
+		if (sum == T) {
+			max = sum;
+			M.assign(temp.begin(), temp.end());
+			break;
+		}
+		else if (sum < T && sum > max) {
+			max = sum;
+			M.assign(temp.begin(), temp.end());
+		}
+		else {
+			sum = 0;
+		}
+		temp.clear();
+	}
+	S = max;
+}
+
+int main()
+{
+	vector <unsigned int> I = { 10, 12, 12 ,9 };
+	vector<unsigned int> M;
+
+	unsigned int T = 31;
+	unsigned int S = 0;
+
+	find_largest_element(T, I, M, S);
+
+	std::cout << "Output vector is:" << endl;
+	for (auto it = M.begin(); it < M.end(); it++)
+		std::cout << *it << "\t";
+
+	return 0;
+}
